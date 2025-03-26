@@ -23,7 +23,7 @@ public class User {
     }
 
     public enum UserRole {
-        EMPLOYER, JOB_SEEKER
+        EMPLOYER, ADMIN, JOB_SEEKER
     }
 
     public Long getId() {
