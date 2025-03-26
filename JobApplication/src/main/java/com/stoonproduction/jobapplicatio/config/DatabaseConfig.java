@@ -1,5 +1,5 @@
 // src/main/java/config/DatabaseConfig.java
-package com.stoonproduction.jobapplication.config;
+package com.stoonproduction.jobapplicatio.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

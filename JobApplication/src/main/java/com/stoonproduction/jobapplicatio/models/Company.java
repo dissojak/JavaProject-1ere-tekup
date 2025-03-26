@@ -1,4 +1,4 @@
-package com.stoonproduction.jobapplication.models;
+package com.stoonproduction.jobapplicatio.models;
 
 public class Company {
     private Long id;

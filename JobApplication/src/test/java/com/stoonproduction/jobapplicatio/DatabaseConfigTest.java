@@ -1,8 +1,8 @@
-package com.stoonproduction.jobapplication;
+package com.stoonproduction.jobapplicatio;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.stoonproduction.jobapplication.config.DatabaseConfig;
+import com.stoonproduction.jobapplicatio.config.DatabaseConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

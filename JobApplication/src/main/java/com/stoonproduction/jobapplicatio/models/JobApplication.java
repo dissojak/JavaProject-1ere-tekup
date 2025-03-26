@@ -1,4 +1,4 @@
-package com.stoonproduction.jobapplication.models;
+package com.stoonproduction.jobapplicatio.models;
 
 import java.time.LocalDateTime;
 
