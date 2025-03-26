@@ -5,6 +5,7 @@ import com.stoonproduction.jobapplicatio.dao.UserDao;
 import com.stoonproduction.jobapplicatio.models.User;
 import com.stoonproduction.jobapplicatio.utils.JwtUtil;
 import com.stoonproduction.jobapplicatio.utils.PasswordHasher;
+import com.stoonproduction.jobapplicatio.utils.AuthMiddleware;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.json.JSONObject;
@@ -51,18 +52,17 @@ public class UserController implements HttpHandler {
                     stmt.setString(1, user.getEmail());
                     stmt.setString(2, user.getPassword());
                     stmt.setString(3, user.getRole().name());
-                    stmt.setLong(4, user.getId()); // We need to specify the user ID for the update
+                    stmt.setLong(4, user.getId());
 
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        return user; // Return the updated user
+                        return user;
                     } else {
-                        return null; // No user found or no update was performed
+                        return null;
                     }
                 }
             }
         }
-
 
         @Override
         public Optional<User> findById(Long id) throws SQLException {
@@ -83,7 +83,6 @@ public class UserController implements HttpHandler {
                 }
             }
         }
-
 
         @Override
         public Optional<User> findByEmail(String email) throws SQLException {
@@ -119,15 +118,19 @@ public class UserController implements HttpHandler {
 
         @Override
         public List<User> findAll() throws SQLException {
-            // Similar logic for finding all users can be added here
             return null;
         }
 
         @Override
         public void deleteById(Long id) throws SQLException {
-            // Similar logic for deleting user by ID can be added here
         }
     };
+
+    private final AuthMiddleware authMiddleware;
+
+    public UserController() {
+        this.authMiddleware = new AuthMiddleware(userDao);
+    }
 
     // Register User
     public void handleRegister(HttpExchange exchange) throws IOException {
@@ -162,7 +165,6 @@ public class UserController implements HttpHandler {
             String email = request.getString("email");
             String password = request.getString("password");
 
-            // Debugging: log the email and password
             System.out.println("login with email: " + email);
 
             Optional<User> userOpt = userDao.findByEmail(email);
@@ -175,7 +177,6 @@ public class UserController implements HttpHandler {
             User user = userOpt.get();
             System.out.println("User found: " + user.getEmail() + ", Role: " + user.getRole());
 
-            // Debugging: Check password hash comparison
             System.out.println("Password verification for: " + email);
             if (!PasswordHasher.verifyPassword(password, user.getPassword())) {
                 System.out.println("Password mismatch for email: " + email);
@@ -183,7 +184,6 @@ public class UserController implements HttpHandler {
                 return;
             }
 
-            // Generate token if password is correct
             String token = JwtUtil.generateToken(user.getEmail(), user.getRole());
             System.out.println("Token generated for user: " + email);
 
@@ -202,17 +202,33 @@ public class UserController implements HttpHandler {
 
     public void handleUpdateUser(HttpExchange exchange) throws IOException {
         try {
+            // Changed this line to use instance authMiddleware
+            User currentUser = authMiddleware.authenticate(exchange);
+            if (currentUser == null) return;
+
             JSONObject request = parseRequest(exchange);
             long userId = request.getLong("userId");
+
+            if (currentUser.getId() != userId && currentUser.getRole() != User.UserRole.ADMIN) {
+                sendResponse(exchange, 403, new JSONObject().put("error", "You can only update your own account"));
+                return;
+            }
+
             String newEmail = request.optString("email", null);
             String newPassword = request.optString("password", null);
             String newRoleString = request.optString("role", null);
             User.UserRole newRole = null;
+
             if (newRoleString != null) {
+                System.out.println("Current user role: " + currentUser.getRole()); // Debug log
+                if (currentUser.getRole() != User.UserRole.ADMIN) {
+                    System.out.println("BLOCKED: User is not admin!"); // Debug log
+                    sendResponse(exchange, 403, new JSONObject().put("error", "Only admins can change roles"));
+                    return; // This should stop execution
+                }
                 newRole = User.UserRole.valueOf(newRoleString.toUpperCase());
             }
 
-            // Fetch the existing user by ID (you need to implement this in UserDao)
             Optional<User> existingUserOpt = userDao.findById(userId);
             if (!existingUserOpt.isPresent()) {
                 sendResponse(exchange, 404, new JSONObject().put("error", "User not found"));
@@ -221,9 +237,7 @@ public class UserController implements HttpHandler {
 
             User existingUser = existingUserOpt.get();
 
-            // Update fields only if they are provided
             if (newEmail != null && !newEmail.equals(existingUser.getEmail())) {
-                // Check if email already exists
                 if (userDao.existsByEmail(newEmail)) {
                     sendResponse(exchange, 400, new JSONObject().put("error", "Email already in use"));
                     return;
@@ -239,14 +253,39 @@ public class UserController implements HttpHandler {
                 existingUser.setRole(newRole);
             }
 
-            // Save the updated user using the update method
             userDao.update(existingUser);
 
-            // Respond with success
             JSONObject response = new JSONObject()
                     .put("status", "success")
                     .put("userId", existingUser.getId());
             sendResponse(exchange, 200, response);
+
+        } catch (SQLException e) {
+            sendResponse(exchange, 500, new JSONObject().put("error", "Database error: " + e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            sendResponse(exchange, 400, new JSONObject().put("error", "Invalid role specified"));
+        } catch (Exception e) {
+            sendResponse(exchange, 500, new JSONObject().put("error", "Internal server error"));
+        }
+    }
+
+    public void handleDeleteUser(HttpExchange exchange) throws IOException {
+        try {
+            // Added authentication check
+            User currentUser = authMiddleware.authenticate(exchange);
+            if (currentUser == null) return;
+
+            JSONObject request = parseRequest(exchange);
+            long userId = request.getLong("userId");
+
+            if (currentUser.getId() != userId && currentUser.getRole() != User.UserRole.ADMIN) {
+                sendResponse(exchange, 403, new JSONObject().put("error", "You can only delete your own account"));
+                return;
+            }
+
+            userDao.deleteById(userId);
+            sendResponse(exchange, 200, new JSONObject().put("status", "success"));
+
         } catch (SQLException e) {
             sendResponse(exchange, 500, new JSONObject().put("error", "Database error: " + e.getMessage()));
         } catch (Exception e) {
@@ -254,17 +293,47 @@ public class UserController implements HttpHandler {
         }
     }
 
+    public void handleGetUser(HttpExchange exchange) throws IOException {
+        try {
+            // Added authentication check
+            User currentUser = authMiddleware.authenticate(exchange);
+            if (currentUser == null) return;
 
+            JSONObject request = parseRequest(exchange);
+            long userId = request.getLong("userId");
 
+            if (currentUser.getId() != userId && currentUser.getRole() != User.UserRole.ADMIN) {
+                sendResponse(exchange, 403, new JSONObject().put("error", "You can only view your own account"));
+                return;
+            }
 
-    // Utility function to parse the incoming request
+            Optional<User> userOpt = userDao.findById(userId);
+            if (!userOpt.isPresent()) {
+                sendResponse(exchange, 404, new JSONObject().put("error", "User not found"));
+                return;
+            }
+
+            JSONObject response = new JSONObject()
+                    .put("status", "success")
+                    .put("user", new JSONObject()
+                            .put("id", userOpt.get().getId())
+                            .put("email", userOpt.get().getEmail())
+                            .put("role", userOpt.get().getRole().toString()));
+            sendResponse(exchange, 200, response);
+
+        } catch (SQLException e) {
+            sendResponse(exchange, 500, new JSONObject().put("error", "Database error: " + e.getMessage()));
+        } catch (Exception e) {
+            sendResponse(exchange, 500, new JSONObject().put("error", "Internal server error"));
+        }
+    }
+
     private JSONObject parseRequest(HttpExchange exchange) throws IOException {
         InputStream requestBody = exchange.getRequestBody();
         String body = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
         return new JSONObject(body);
     }
 
-    // Send a response back to the client
     private void sendResponse(HttpExchange exchange, int statusCode, JSONObject response) throws IOException {
         byte[] responseBytes = response.toString().getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
@@ -277,12 +346,5 @@ public class UserController implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // This method can be left empty as routes are handled elsewhere
-    }
-
-
-    public void handleDeleteUser(HttpExchange httpExchange) {
-    }
-
-    public void handleGetUser(HttpExchange httpExchange) {
     }
 }
