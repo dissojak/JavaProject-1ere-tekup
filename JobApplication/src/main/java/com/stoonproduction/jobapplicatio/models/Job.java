@@ -7,32 +7,29 @@ public class Job {
     private String title;
     private String description;
     private String location;
-    private Double salaryMin;
-    private Double salaryMax;
+    private Double salary;  // Changed from salaryMin/salaryMax
     private Long companyId;
     private Long postedBy;
     private LocalDateTime createdAt;
 
     public Job(String title, String description, String location,
-               Double salaryMin, Double salaryMax, Long companyId, Long postedBy) {
-        this(null, title, description, location, salaryMin, salaryMax,
-                companyId, postedBy, LocalDateTime.now());
+               Double salary, Long companyId, Long postedBy) {
+        this(null, title, description, location, salary, companyId, postedBy, LocalDateTime.now());
     }
 
     public Job(Long id, String title, String description, String location,
-               Double salaryMin, Double salaryMax, Long companyId,
-               Long postedBy, LocalDateTime createdAt) {
+               Double salary, Long companyId, Long postedBy, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
-        this.salaryMin = salaryMin;
-        this.salaryMax = salaryMax;
+        this.salary = salary;
         this.companyId = companyId;
         this.postedBy = postedBy;
         this.createdAt = createdAt;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -65,20 +62,12 @@ public class Job {
         this.location = location;
     }
 
-    public Double getSalaryMin() {
-        return salaryMin;
+    public Double getSalary() {
+        return salary;
     }
 
-    public void setSalaryMin(Double salaryMin) {
-        this.salaryMin = salaryMin;
-    }
-
-    public Double getSalaryMax() {
-        return salaryMax;
-    }
-
-    public void setSalaryMax(Double salaryMax) {
-        this.salaryMax = salaryMax;
+    public void setSalary(Double salary) {
+        this.salary = salary;
     }
 
     public Long getCompanyId() {
@@ -112,8 +101,7 @@ public class Job {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
-                ", salaryMin=" + salaryMin +
-                ", salaryMax=" + salaryMax +
+                ", salary=" + salary +
                 ", companyId=" + companyId +
                 ", postedBy=" + postedBy +
                 ", createdAt=" + createdAt +
