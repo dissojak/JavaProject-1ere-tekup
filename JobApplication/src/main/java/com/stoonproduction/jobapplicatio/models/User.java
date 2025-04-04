@@ -22,8 +22,12 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public User(Long id, String email, String password, UserRole role) {
+        this(id, email, password, role, LocalDateTime.now());
+    }
+
     public enum UserRole {
-        EMPLOYER, ADMIN, JOB_SEEKER
+        EMPLOYER, SUPER_ADMIN, JOB_SEEKER
     }
 
     public Long getId() {
