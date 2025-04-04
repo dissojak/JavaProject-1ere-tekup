@@ -14,23 +14,28 @@ This project is a **Job Application Management API** built with **Java, JDBC, an
 - **Java** (Backend logic)  
 - **JDBC** (Database connectivity)  
 - **Maven** (Dependency management)  
-- **MySQL/PostgreSQL** (Specify which DB you’re using)  
+- **MySQL** (Used Database)  
 
 ## Installation  
 
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-username/job-application-api.git
-   cd job-application-api
-   ```  
-2. Build the project with Maven:  
+   git clone https://github.com/dissojak/JavaProject-1ere-tekup.git
+   cd JavaProject-1ere-tekup
+   ```
+2. Check & Install the needed JDK:
+   ```bash
+   javac -version
+   resualt should be : javac 23.0.2
+   ```
+4. Build the project with Maven ( install it first ):  
    ```bash
    mvn clean install
    ```  
-3. Configure the database connection in `application.properties` or `config.java`  
-4. Run the application:  
+5. Configure the database connection in `application.properties` or `config.java`  
+6. Run the application:  
    ```bash
-   java -jar target/job-application-api.jar
+   USE POSTMAN FOR TESTING ROUTES
    ```  
 
 ## API Endpoints  
