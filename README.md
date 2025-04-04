@@ -32,7 +32,7 @@ This project is a **Job Application Management API** built with **Java, JDBC, an
    ```bash
    mvn clean install
    ```  
-5. Configure the database connection in `application.properties` or `config.java`  
+5. Configure the database connection under `config/DatabaseConfig.java`  
 6. Run the application:  
    ```bash
    USE POSTMAN FOR TESTING ROUTES
