@@ -1,5 +1,7 @@
 package com.stoonproduction.jobapplicatio.dao;
 
+import com.stoonproduction.jobapplicatio.models.Employer;
+import com.stoonproduction.jobapplicatio.models.JobSeeker;
 import com.stoonproduction.jobapplicatio.models.User;
 
 import java.sql.SQLException;
@@ -10,6 +12,10 @@ public interface UserDao {
     User save(User user) throws SQLException;
 
     User update(User user) throws SQLException;
+
+/*    Optional<Employer> findById(Long id) throws SQLException;
+
+    Optional<JobSeeker> findById(Long id) throws SQLException;*/
 
     Optional<User> findById(Long id) throws SQLException;
 
