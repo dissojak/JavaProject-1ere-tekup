@@ -1,5 +1,6 @@
 package com.stoonproduction.jobapplicatio;
 
+import com.stoonproduction.jobapplicatio.routes.CompanyRoutes;
 import com.stoonproduction.jobapplicatio.routes.UserRoutes;
 import com.sun.net.httpserver.HttpServer;
 
@@ -13,6 +14,7 @@ public class Main {
 
         // Register routes for user-related requests
         UserRoutes.registerRoutes(server);
+        CompanyRoutes.registerRoutes(server);
         server.start();
         System.out.println("✅ Server ready at http://localhost:8000");
     }
