@@ -17,6 +17,8 @@ public class Company {
         this.website = website;
     }
 
+    public Company() {}
+
     // Getters and Setters
     public Long getId() {
         return id;
