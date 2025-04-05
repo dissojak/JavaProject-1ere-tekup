@@ -5,6 +5,7 @@ This project is a **Job Application Management API** built with **Java, JDBC, an
 
 ## Class Diagram 
 <img src="./JobApplication.png" />
+<object src="./Job_Application.pdf" />
 
 ## Features  
 - Add, update, and delete job applications  
