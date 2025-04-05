@@ -3,6 +3,9 @@
 ## Overview  
 This project is a **Job Application Management API** built with **Java, JDBC, and Maven**. It provides functionality to manage job applications, track statuses, and interact with a database for storing job-related data.  
 
+## Class Diagram 
+<img src="./JobApplication.png" />
+
 ## Features  
 - Add, update, and delete job applications  
 - Track application status (applied, interviewing, accepted, rejected)  
