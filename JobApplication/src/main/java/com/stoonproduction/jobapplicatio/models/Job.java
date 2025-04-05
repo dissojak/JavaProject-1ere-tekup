@@ -8,23 +8,21 @@ public class Job {
     private String description;
     private String location;
     private Double salary;  // Changed from salaryMin/salaryMax
-    private Long companyId;
     private Long postedBy;
     private LocalDateTime createdAt;
 
     public Job(String title, String description, String location,
-               Double salary, Long companyId, Long postedBy) {
-        this(null, title, description, location, salary, companyId, postedBy, LocalDateTime.now());
+               Double salary, Long postedBy) {
+        this(null, title, description, location, salary, postedBy, LocalDateTime.now());
     }
 
     public Job(Long id, String title, String description, String location,
-               Double salary, Long companyId, Long postedBy, LocalDateTime createdAt) {
+               Double salary, Long postedBy, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
         this.salary = salary;
-        this.companyId = companyId;
         this.postedBy = postedBy;
         this.createdAt = createdAt;
     }
@@ -70,13 +68,6 @@ public class Job {
         this.salary = salary;
     }
 
-    public Long getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
-    }
 
     public Long getPostedBy() {
         return postedBy;
@@ -102,7 +93,6 @@ public class Job {
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", salary=" + salary +
-                ", companyId=" + companyId +
                 ", postedBy=" + postedBy +
                 ", createdAt=" + createdAt +
                 '}';
