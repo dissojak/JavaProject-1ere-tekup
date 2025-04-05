@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public class UserController extends BaseController implements HttpHandler {
 
-    private final UserDao userDao = new UserDao() {
+    public static final UserDao userDao = new UserDao() {
 
         @Override
         public User save(User user) throws SQLException {
@@ -154,7 +154,7 @@ public class UserController extends BaseController implements HttpHandler {
         }
     };
 
-    private final EmployerDao employerDao = new EmployerDao() {
+    private static final EmployerDao employerDao = new EmployerDao() {
         // SAVE - Returns Employer instead of User
         @Override
         public Employer save(User user) throws SQLException {
@@ -358,7 +358,7 @@ public class UserController extends BaseController implements HttpHandler {
         // ... [implement other required methods] ...
     };
 
-    private final JobSeekerDao jobSeekerDao = new JobSeekerDao() {
+    private static final JobSeekerDao jobSeekerDao = new JobSeekerDao() {
         // SAVE - Handles both User and JobSeeker data
         @Override
         public JobSeeker save(User user) throws SQLException {
