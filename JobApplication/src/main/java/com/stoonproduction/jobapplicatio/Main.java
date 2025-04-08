@@ -1,6 +1,7 @@
 package com.stoonproduction.jobapplicatio;
 
 import com.stoonproduction.jobapplicatio.routes.CompanyRoutes;
+import com.stoonproduction.jobapplicatio.routes.JobApplicationRoutes;
 import com.stoonproduction.jobapplicatio.routes.JobOffresRoutes;
 import com.stoonproduction.jobapplicatio.routes.UserRoutes;
 import com.sun.net.httpserver.HttpServer;
@@ -17,6 +18,7 @@ public class Main {
         UserRoutes.registerRoutes(server);
         CompanyRoutes.registerRoutes(server);
         JobOffresRoutes.registerRoutes(server);
+        JobApplicationRoutes.registerRoutes(server);
 
         server.setExecutor(null);
         server.start();
