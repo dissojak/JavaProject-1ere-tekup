@@ -10,7 +10,7 @@ public class JobApplication {
     private LocalDateTime appliedAt;
 
     public enum ApplicationStatus {
-        PENDING, ACCEPTED, REJECTED
+        PENDING, REVIEWED, ACCEPTED, REJECTED
     }
 
     public JobApplication(Long jobId, Long jobSeekerId) {

@@ -497,7 +497,8 @@ public class JobApplicationController extends BaseController implements HttpHand
             }
 
             long applicationId = request.getLong("id");
-            String status = request.getString("status");
+            String newStatus = request.getString("status");
+            System.out.println("this is status: "+newStatus);
 
             Optional<JobApplication> applicationOpt = jobApplicationDao.findById(applicationId);
             if (applicationOpt.isEmpty()) {
@@ -516,7 +517,12 @@ public class JobApplicationController extends BaseController implements HttpHand
             }
 
             // Update the status
-            application.setStatus(JobApplication.ApplicationStatus.valueOf(status));
+            //application.setStatus(JobApplication.ApplicationStatus.valueOf(status));
+            application.setStatus(JobApplication.ApplicationStatus.valueOf(newStatus));
+
+            // You'll need to add an update method to your JobApplicationDao interface
+            // For now, we'll assume it exists
+            jobApplicationDao.update(application);
             // Note: You would need to add an update method to your DAO to persist this change
 
             sendJsonResponse(exchange, 200, new JSONObject()
